@@ -1,12 +1,23 @@
 var request   = require('request');
 const fs      = require('fs');
 const secrets = require('./secrets.js')
+let repoOwner = process.argv[2];
+let repoName = process.argv[3];
 
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 
 function getRepoContributors(repoOwner, repoName, cb) {
+
+  if (!repoOwner) {
+    console.log('No owner detected, please enter repo owner')
+  };
+
+  if (!repoName) {
+    console.log('No name detected, please enter repo name')
+  };
+
   var options = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
@@ -33,11 +44,11 @@ function downloadImageByURL(url, filePath) {
 }
 
 
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(repoOwner, repoName, function(err, result) {
   let parsedResult = JSON.parse(result);
 
   for (let i = 0; i < parsedResult.length; i++) {
-    downloadImageByURL(parsedResult[i].avatar_url, './downloadedImg/' + parsedResult[i].login + '.png')
+    downloadImageByURL(parsedResult[i].avatar_url, './downloadedImg/' + parsedResult[i].login + '.pngdo')
   };
 })
 
