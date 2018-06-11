@@ -7,7 +7,6 @@ console.log('Welcome to the GitHub Avatar Downloader!');
 
 
 function getRepoContributors(repoOwner, repoName, cb) {
-
   var options = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
@@ -16,30 +15,31 @@ function getRepoContributors(repoOwner, repoName, cb) {
     }
   };
   request(options, function(err, res, body) {
-    let parseResult = JSON.parse(body);
-    cb(err, parseResult)
+    cb(err, body)
+
   });
 }
 
 
 function downloadImageByURL(url, filePath) {
   request.get(url)
-         .on('error', function (err) {
-            throw err;
-          })
-         .on('response', function (response) {
-           console.log('Response Status Code: ', response.statusCode);
-         })
-         .pipe(fs.createWriteStream('./downloaded.jpg'));
+  .on('error', function (err) {
+    throw err;
+  })
+  .on('response', function (response) {
+   console.log('Response Status Code: ', response.statusCode);
+ })
+  .pipe(fs.createWriteStream(filePath));
 }
 
 
 getRepoContributors("jquery", "jquery", function(err, result) {
-  result.forEach(function (element) {
-    console.log(element.avatar_url)
-  })
-});
+  let parsedResult = JSON.parse(result);
+
+  for (let i = 0; i < parsedResult.length; i++) {
+    downloadImageByURL(parsedResult[i].avatar_url, './downloadedImg/' + parsedResult[i].login + '.png')
+  };
+})
 
 
 
-downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg")
