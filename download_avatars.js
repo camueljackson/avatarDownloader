@@ -2,7 +2,7 @@ var request   = require('request');
 const fs      = require('fs');
 const secrets = require('./secrets.js')
 let repoOwner = process.argv[2];
-let repoName = process.argv[3];
+let repoName  = process.argv[3];
 
 
 console.log('Welcome to the GitHub Avatar Downloader!');
@@ -12,23 +12,23 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
   if (!repoOwner) {
     console.log('No owner detected, please enter repo owner')
-  };
-
-  if (!repoName) {
+  } else if (!repoName) {
     console.log('No name detected, please enter repo name')
-  };
+  } else {
+    var options = {
+      url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
+      headers: {
+        'User-Agent': 'request',
+        'Authorization': 'GITHUB_TOKEN'
+      }
+    };
+    request(options, function(err, res, body) {
+      cb(err, body)
 
-  var options = {
-    url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
-    headers: {
-      'User-Agent': 'request',
-      'Authorization': 'GITHUB_TOKEN'
-    }
-  };
-  request(options, function(err, res, body) {
-    cb(err, body)
+    });
 
-  });
+  }
+
 }
 
 
